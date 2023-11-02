@@ -1,39 +1,26 @@
 'use client';
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import {
-  useSearchParams,
-  usePathname,
-  useRouter,
-} from 'next/navigation';
-import { use } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
 
-export default function Search({
-  placeholder,
-}: {
-  placeholder: string;
-}) {
+export default function Search({ placeholder }: { placeholder: string }) {
   const searchParams = useSearchParams();
-  const pathname = usePathname();
   const { replace } = useRouter();
+  const pathname = usePathname();
 
-  // debounce stops search occuring per keystroke
   const handleSearch = useDebouncedCallback((term) => {
+    console.log(`Searching... ${term}`);
+
     const params = new URLSearchParams(searchParams);
+
     params.set('page', '1');
+
     if (term) {
       params.set('query', term);
     } else {
       params.delete('query');
     }
-
-    // pathname = /dashboard/invoices
-    // params.toString -> user input to URL friendly string
-
-    // updates URL with users search data
-    // eg. /dashboard/invoices?query=lee
-    // if user searches 'lee'
     replace(`${pathname}?${params.toString()}`);
   }, 300);
 

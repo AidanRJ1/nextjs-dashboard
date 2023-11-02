@@ -12,22 +12,16 @@ import { Button } from '@/app/ui/button';
 import { createInvoice } from '@/app/lib/actions';
 import { useFormState } from 'react-dom';
 
-export default function Form({
-  customers,
-}: {
-  customers: CustomerField[];
-}) {
+export default function Form({ customers }: { customers: CustomerField[] }) {
   const initialState = { message: null, errors: {} };
   const [state, dispatch] = useFormState(createInvoice, initialState);
+
   return (
     <form action={dispatch}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Customer Name */}
         <div className="mb-4">
-          <label
-            htmlFor="customer"
-            className="mb-2 block text-sm font-medium"
-          >
+          <label htmlFor="customer" className="mb-2 block text-sm font-medium">
             Choose customer
           </label>
           <div className="relative">
@@ -49,6 +43,7 @@ export default function Form({
             </select>
             <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
           </div>
+
           {state.errors?.customerId ? (
             <div
               id="customer-error"
@@ -64,10 +59,7 @@ export default function Form({
 
         {/* Invoice Amount */}
         <div className="mb-4">
-          <label
-            htmlFor="amount"
-            className="mb-2 block text-sm font-medium"
-          >
+          <label htmlFor="amount" className="mb-2 block text-sm font-medium">
             Choose an amount
           </label>
           <div className="relative mt-2 rounded-md">
@@ -79,10 +71,23 @@ export default function Form({
                 step="0.01"
                 placeholder="Enter USD amount"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+                aria-describedby="amount-error"
               />
               <CurrencyDollarIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
           </div>
+
+          {state.errors?.amount ? (
+            <div
+              id="amount-error"
+              aria-live="polite"
+              className="mt-2 text-sm text-red-500"
+            >
+              {state.errors.amount.map((error: string) => (
+                <p key={error}>{error}</p>
+              ))}
+            </div>
+          ) : null}
         </div>
 
         {/* Invoice Status */}
@@ -124,7 +129,24 @@ export default function Form({
               </div>
             </div>
           </div>
+          {state.errors?.status ? (
+            <div
+              aria-describedby="status-error"
+              aria-live="polite"
+              className="mt-2 text-sm text-red-500"
+            >
+              {state.errors.status.map((error: string) => (
+                <p key={error}>{error}</p>
+              ))}
+            </div>
+          ) : null}
         </fieldset>
+
+        {state.message ? (
+          <div aria-live="polite" className="my-2 text-sm text-red-500">
+            <p>{state.message}</p>
+          </div>
+        ) : null}
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
